@@ -13,7 +13,7 @@ CREATE TABLE NhanVien (
     HoTen VARCHAR(100),
     GioiTinh VARCHAR(10),
     SoDienThoai VARCHAR(15) UNIQUE, 
-    NgaySinh DATE NOT NULL,
+    NgaySinh DATE,
     DiaChi VARCHAR(255),
     FOREIGN KEY (MaChucVu) REFERENCES ChucVu(MaChucVu)
 );
@@ -21,34 +21,34 @@ CREATE TABLE NhanVien (
 -- Bảng Nhân viên FullTime
 CREATE TABLE FullTime (
     MaNhanVien INT PRIMARY KEY,
-    HopDongDaiHan VARCHAR(50) NOT NULL,
-    LuongCoBan DECIMAL(15,2) NOT NULL,
+    HopDongDaiHan VARCHAR(50),
+    LuongCoBan DECIMAL(15, 2),
     FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien)
 );
 
 -- Bảng Nhân viên PartTime
 CREATE TABLE PartTime (
     MaNhanVien INT PRIMARY KEY,
-    SoGioLam INT NOT NULL,
-    LuongTheoGio DECIMAL(15,2) NOT NULL,
+    SoGioLam DECIMAL(15, 2),
+    LuongTheoGio DECIMAL(15, 2),
     FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien)
 );
 
 -- Bảng Lương
 CREATE TABLE Luong (
     MaNhanVien INT PRIMARY KEY,
-    ThoiGian INT NOT NULL,
-    NghiKhongPhep INT DEFAULT 0,
-    LuongThang13 DECIMAL(15,2),
-    NgayBatDau DATE NOT NULL,
+    ThoiGian INT,
+    NghiKhongPhep INT NOT NULL,
+    LuongThang13 DECIMAL(15,2) NOT NULL,
+    NgayBatDau DATE,
     FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien)
 );
 
 -- Bảng Khách hàng
 CREATE TABLE KhachHang (
     MaKhachHang INT PRIMARY KEY,
-    TenKhachHang VARCHAR(100) NOT NULL,
-    SDT VARCHAR(15) UNIQUE,          -- có thể null nhưng nếu có thì không trùng
+    TenKhachHang VARCHAR(100),
+    SDT VARCHAR(15),
     GioiTinh VARCHAR(10),
     DiaChi VARCHAR(255)
 );
@@ -56,24 +56,24 @@ CREATE TABLE KhachHang (
 -- Bảng Khách hàng VIP
 CREATE TABLE KhachHangVIP (
     MaKhachHang INT PRIMARY KEY,
-    DiemTichLuy INT NOT NULL,
-    MucGiamGia DECIMAL(5,2) NOT NULL,
+    DiemTichLuy INT,
+    MucGiamGia DECIMAL(5,2),
     FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
 );
 
 -- Bảng Khách hàng thành viên
 CREATE TABLE KhachHangThanhVien (
     MaKhachHang INT PRIMARY KEY,
-    NgayDangKy DATE NOT NULL,
-    LoaiThe VARCHAR(20) NOT NULL,
+    NgayDangKy DATE,
+    LoaiThe VARCHAR(10),
     FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
 );
 
 -- Bảng Phản hồi
 CREATE TABLE PhanHoi (
     MaPhanHoi INT PRIMARY KEY,
-    MaKhachHang INT NOT NULL,
-    DanhGiaSanPham VARCHAR(255) NOT NULL,
+    MaKhachHang INT,
+    DanhGiaSanPham VARCHAR(255),
     DongGop VARCHAR(255),
     FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
 );
@@ -81,39 +81,39 @@ CREATE TABLE PhanHoi (
 -- Bảng Loại hàng
 CREATE TABLE LoaiHang (
     MaLoaiHang INT PRIMARY KEY,
-    TenLoaiHang VARCHAR(100) NOT NULL UNIQUE,
-    MauMa VARCHAR(50),
-    NoiSanXuat VARCHAR(100)
+    TenLoaiHang VARCHAR(100),
+    MauMa VARCHAR(100),
+    NoiSanXuat VARCHAR(255)
 );
 
 -- Bảng Hàng hóa
 CREATE TABLE HangHoa (
     MaHH INT PRIMARY KEY,
-    MaLoaiHang INT NOT NULL,
-    TenHangHoa VARCHAR(100) NOT NULL,
-    SoLuong INT NOT NULL,
-    NgaySX DATE NOT NULL,
-    HSD DATE NOT NULL,
-    GiaBan DECIMAL(15,2) NOT NULL,
+    MaLoaiHang INT,
+    TenHangHoa VARCHAR(100),
+    SoLuong INT,
+    NgaySX DATE,
+    HSD DATE,
+    GiaBan DECIMAL(15,2),
     FOREIGN KEY (MaLoaiHang) REFERENCES LoaiHang(MaLoaiHang)
 );
 
 -- Bảng Hóa đơn
 CREATE TABLE HoaDon (
     MaHoaDon INT PRIMARY KEY,
-    NgayLapHoaDon DATE NOT NULL,
+    NgayLapHoaDon DATE,
     NgayNhanHang DATE,
-    MaNhanVien INT NOT NULL,
-    MaKhachHang INT NOT NULL,
+    MaNhanVien INT,
+    MaKhachHang INT,
     FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien),
     FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
 );
 
--- Bảng Chi tiết hóa đơn (bảng trung gian N-N)
+-- Bảng Chi tiết hóa đơn
 CREATE TABLE ChiTietHoaDon (
     MaHoaDon INT,
     MaHH INT,
-    SoLuong INT NOT NULL,
+    SoLuong DECIMAL,
     PRIMARY KEY (MaHoaDon, MaHH),
     FOREIGN KEY (MaHoaDon) REFERENCES HoaDon(MaHoaDon),
     FOREIGN KEY (MaHH) REFERENCES HangHoa(MaHH)
