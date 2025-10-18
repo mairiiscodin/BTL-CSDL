@@ -1,120 +1,263 @@
-CREATE DATABASE QLCH
+-- ================================================
+-- TẠO CƠ SỞ DỮ LIỆU
+-- ================================================
+CREATE DATABASE QuanLyBanHang;
+GO
+USE QuanLyBanHang;
+GO
 
--- Bảng chức vụ
-CREATE TABLE ChucVu (
-    MaChucVu INT PRIMARY KEY,
-    TenChucVu VARCHAR(20) 
+-- ================================================
+-- BẢNG CHỨC VỤ
+-- ================================================
+CREATE TABLE CHUCVU (
+MACHUCVU INT PRIMARY KEY,
+TENCHUCVU NVARCHAR(100)
 );
 
--- Bảng Nhân viên
-CREATE TABLE NhanVien (
-    MaNhanVien INT PRIMARY KEY,
-    MaChucVu INT,
-    HoTen VARCHAR(100),
-    GioiTinh VARCHAR(10),
-    SoDienThoai VARCHAR(15) UNIQUE, 
-    NgaySinh DATE,
-    DiaChi VARCHAR(255),
-    FOREIGN KEY (MaChucVu) REFERENCES ChucVu(MaChucVu)
+-- ================================================
+-- BẢNG BỘ PHẬN
+-- ================================================
+CREATE TABLE BOPHAN (
+MABOPHAN INT PRIMARY KEY,
+TENBOPHAN NVARCHAR(100),
+MOTA NVARCHAR(255),
+SODIENTHOAIBP VARCHAR(20)
 );
 
--- Bảng Nhân viên FullTime
-CREATE TABLE FullTime (
-    MaNhanVien INT PRIMARY KEY,
-    HopDongDaiHan VARCHAR(50),
-    LuongCoBan DECIMAL(15, 2),
-    FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien)
+-- ================================================
+-- BẢNG NHÂN VIÊN
+-- ================================================
+CREATE TABLE NHANVIEN (
+MANHANVIEN INT PRIMARY KEY,
+HOTEN NVARCHAR(100),
+GIOITINH NVARCHAR(10),
+SODIENTHOAI VARCHAR(20),
+NGAYSINH DATE,
+MACHUCVU INT,
+MABOPHAN INT,
+DIACHI NVARCHAR(255),
+FOREIGN KEY (MACHUCVU) REFERENCES CHUCVU(MACHUCVU),
+FOREIGN KEY (MABOPHAN) REFERENCES BOPHAN(MABOPHAN)
 );
 
--- Bảng Nhân viên PartTime
-CREATE TABLE PartTime (
-    MaNhanVien INT PRIMARY KEY,
-    SoGioLam DECIMAL(15, 2),
-    LuongTheoGio DECIMAL(15, 2),
-    FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien)
+-- ================================================
+-- BẢNG NHÂN VIÊN FULLTIME
+-- ================================================
+CREATE TABLE NHANVIEN_FULLTIME (
+MANHANVIEN INT PRIMARY KEY,
+HOPDONGTHOIHAN NVARCHAR(20),
+LUONGCOBAN DECIMAL(12,2),
+FOREIGN KEY (MANHANVIEN) REFERENCES NHANVIEN(MANHANVIEN)
 );
 
--- Bảng Lương
-CREATE TABLE Luong (
-    MaNhanVien INT PRIMARY KEY,
-    ThoiGian INT,
-    NghiKhongPhep INT NOT NULL,
-    LuongThang13 DECIMAL(15,2) NOT NULL,
-    NgayBatDau DATE,
-    FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien)
+-- ================================================
+-- BẢNG NHÂN VIÊN PARTTIME
+-- ================================================
+CREATE TABLE NHANVIEN_PARTTIME (
+MANHANVIEN INT PRIMARY KEY,
+SOGIOLAM INT,
+LUONGTHEOGIO DECIMAL(12,2),
+FOREIGN KEY (MANHANVIEN) REFERENCES NHANVIEN(MANHANVIEN)
 );
 
--- Bảng Khách hàng
-CREATE TABLE KhachHang (
-    MaKhachHang INT PRIMARY KEY,
-    TenKhachHang VARCHAR(100),
-    SDT VARCHAR(15),
-    GioiTinh VARCHAR(10),
-    DiaChi VARCHAR(255)
+-- ================================================
+-- BẢNG LƯƠNG
+-- ================================================
+CREATE TABLE LUONG (
+MANHANVIEN INT PRIMARY KEY,
+THOIGIAN INT,
+NGHIKHONGPHEP INT,
+LUONGTHANG13 DECIMAL(12,2),
+NGAYBATDAU DATE,
+FOREIGN KEY (MANHANVIEN) REFERENCES NHANVIEN(MANHANVIEN)
 );
 
--- Bảng Khách hàng VIP
-CREATE TABLE KhachHangVIP (
-    MaKhachHang INT PRIMARY KEY,
-    DiemTichLuy INT,
-    MucGiamGia DECIMAL(5,2),
-    FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
+-- ================================================
+-- BẢNG NHÀ CUNG CẤP
+-- ================================================
+CREATE TABLE NHACUNGCAP (
+MANHACUNGCAP INT PRIMARY KEY,
+TENNHACUNGCAP NVARCHAR(150),
+DIACHI NVARCHAR(255),
+SODIENTHOAI VARCHAR(20),
+EMAIL VARCHAR(100),
+MST VARCHAR(20),
+STK VARCHAR(30)
 );
 
--- Bảng Khách hàng thành viên
-CREATE TABLE KhachHangThanhVien (
-    MaKhachHang INT PRIMARY KEY,
-    NgayDangKy DATE,
-    LoaiThe VARCHAR(10),
-    FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
+-- ================================================
+-- BẢNG HỢP ĐỒNG
+-- ================================================
+CREATE TABLE HOPDONG (
+MAHOPDONG INT PRIMARY KEY,
+MANHACUNGCAP INT,
+NGAYKYKET DATE,
+NGAYHETHAN DATE,
+GIATRITHOPDONG DECIMAL(14,2),
+DIEUKHOAN NVARCHAR(255),
+TRANGTHAI NVARCHAR(30),
+GHICHU NVARCHAR(255),
+FOREIGN KEY (MANHACUNGCAP) REFERENCES NHACUNGCAP(MANHACUNGCAP)
 );
 
--- Bảng Phản hồi
-CREATE TABLE PhanHoi (
-    MaPhanHoi INT PRIMARY KEY,
-    MaKhachHang INT,
-    DanhGiaSanPham VARCHAR(255),
-    DongGop VARCHAR(255),
-    FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
+-- ================================================
+-- BẢNG LOẠI HÀNG
+-- ================================================
+CREATE TABLE LOAIHANG (
+MALOAIHANG INT PRIMARY KEY,
+TENLOAIHANG NVARCHAR(100),
+MAUMA NVARCHAR(50),
+NOISANXUAT NVARCHAR(100)
 );
 
--- Bảng Loại hàng
-CREATE TABLE LoaiHang (
-    MaLoaiHang INT PRIMARY KEY,
-    TenLoaiHang VARCHAR(100),
-    MauMa VARCHAR(100),
-    NoiSanXuat VARCHAR(255)
+-- ================================================
+-- BẢNG HÀNG HÓA
+-- ================================================
+CREATE TABLE HANGHOA (
+MAHH INT PRIMARY KEY,
+TENHANGHOA NVARCHAR(100),
+MALOAIHANG INT,
+GIABAN DECIMAL(12,2),
+SOLUONG INT,
+NGAYSX DATE,
+HSD DATE,
+FOREIGN KEY (MALOAIHANG) REFERENCES LOAIHANG(MALOAIHANG)
 );
 
--- Bảng Hàng hóa
-CREATE TABLE HangHoa (
-    MaHH INT PRIMARY KEY,
-    MaLoaiHang INT,
-    TenHangHoa VARCHAR(100),
-    SoLuong INT,
-    NgaySX DATE,
-    HSD DATE,
-    GiaBan DECIMAL(15,2),
-    FOREIGN KEY (MaLoaiHang) REFERENCES LoaiHang(MaLoaiHang)
+-- ================================================
+-- BẢNG LÔ HÀNG
+-- ================================================
+CREATE TABLE LOHANG (
+MALOHANG INT PRIMARY KEY,
+MAHOPDONG INT,
+NGAYNHAP DATE,
+SOLUONGHANG INT,
+TONGGIATRI DECIMAL(14,2),
+NGAYSX DATE,
+HSD DATE,
+TINHTRANG NVARCHAR(30),
+GHICHU NVARCHAR(255),
+FOREIGN KEY (MAHOPDONG) REFERENCES HOPDONG(MAHOPDONG)
 );
 
--- Bảng Hóa đơn
-CREATE TABLE HoaDon (
-    MaHoaDon INT PRIMARY KEY,
-    NgayLapHoaDon DATE,
-    NgayNhanHang DATE,
-    MaNhanVien INT,
-    MaKhachHang INT,
-    FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien),
-    FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
+-- ================================================
+-- BẢNG PHIẾU NHẬP
+-- ================================================
+CREATE TABLE PHIEUNHAP (
+MAPHIEUNHAP INT PRIMARY KEY,
+NGAYNHAP DATE,
+MANHANVIEN INT,
+MANHACUNGCAP INT,
+TONGGIATRI DECIMAL(14,2),
+FOREIGN KEY (MANHANVIEN) REFERENCES NHANVIEN(MANHANVIEN),
+FOREIGN KEY (MANHACUNGCAP) REFERENCES NHACUNGCAP(MANHACUNGCAP)
 );
 
--- Bảng Chi tiết hóa đơn
-CREATE TABLE ChiTietHoaDon (
-    MaHoaDon INT,
-    MaHH INT,
-    SoLuong DECIMAL,
-    PRIMARY KEY (MaHoaDon, MaHH),
-    FOREIGN KEY (MaHoaDon) REFERENCES HoaDon(MaHoaDon),
-    FOREIGN KEY (MaHH) REFERENCES HangHoa(MaHH)
+-- ================================================
+-- BẢNG CHI TIẾT PHIẾU NHẬP
+-- ================================================
+CREATE TABLE CHITIETPHIEUNHAP (
+MAPHIEUNHAP INT,
+MAHH INT,
+SOLUONGNHAP INT,
+DONGIANHAP DECIMAL(12,2),
+PRIMARY KEY (MAPHIEUNHAP, MAHH),
+FOREIGN KEY (MAPHIEUNHAP) REFERENCES PHIEUNHAP(MAPHIEUNHAP),
+FOREIGN KEY (MAHH) REFERENCES HANGHOA(MAHH)
+);
+
+-- ================================================
+-- BẢNG PHIẾU XUẤT
+-- ================================================
+CREATE TABLE PHIEUXUAT (
+MAPHIEUXUAT INT PRIMARY KEY,
+NGAYXUAT DATE,
+MANHANVIEN INT,
+MAKHACHHANG INT,
+TONGGIATRI DECIMAL(14,2),
+FOREIGN KEY (MANHANVIEN) REFERENCES NHANVIEN(MANHANVIEN)
+);
+
+-- ================================================
+-- BẢNG CHI TIẾT PHIẾU XUẤT
+-- ================================================
+CREATE TABLE CHITIETPHIEUXUAT (
+MAPHIEUXUAT INT,
+MAHH INT,
+SOLUONGXUAT INT,
+DONGIAXUAT DECIMAL(12,2),
+PRIMARY KEY (MAPHIEUXUAT, MAHH),
+FOREIGN KEY (MAPHIEUXUAT) REFERENCES PHIEUXUAT(MAPHIEUXUAT),
+FOREIGN KEY (MAHH) REFERENCES HANGHOA(MAHH)
+);
+
+-- ================================================
+-- BẢNG KHÁCH HÀNG
+-- ================================================
+CREATE TABLE KHACHHANG (
+MAKHACHHANG INT PRIMARY KEY,
+TENKHACHHANG NVARCHAR(100),
+SDT VARCHAR(20),
+GIOITINH NVARCHAR(10),
+DIACHI NVARCHAR(255),
+CCCD VARCHAR(20),
+MST VARCHAR(20),
+STK VARCHAR(30)
+);
+
+-- ================================================
+-- BẢNG KHÁCH HÀNG VIP
+-- ================================================
+CREATE TABLE KHACHHANG_VIP (
+MAKHACHHANG INT PRIMARY KEY,
+MUCGIAMGIA DECIMAL(5,2),
+FOREIGN KEY (MAKHACHHANG) REFERENCES KHACHHANG(MAKHACHHANG)
+);
+
+-- ================================================
+-- BẢNG KHÁCH HÀNG THÀNH VIÊN
+-- ================================================
+CREATE TABLE KHACHHANG_THANHVIEN (
+MAKHACHHANG INT PRIMARY KEY,
+HANRESET DATE,
+DIEMTICHLUY INT,
+LOAITHE NVARCHAR(50),
+FOREIGN KEY (MAKHACHHANG) REFERENCES KHACHHANG(MAKHACHHANG)
+);
+
+-- ================================================
+-- BẢNG HÓA ĐƠN
+-- ================================================
+CREATE TABLE HOADON (
+MAHOADON INT PRIMARY KEY,
+NGAYLAPHOADON DATE,
+NGAYHANHANHANG DATE,
+MANHANVIEN INT,
+MAKHACHHANG INT,
+FOREIGN KEY (MANHANVIEN) REFERENCES NHANVIEN(MANHANVIEN),
+FOREIGN KEY (MAKHACHHANG) REFERENCES KHACHHANG(MAKHACHHANG)
+);
+
+-- ================================================
+-- BẢNG CHI TIẾT HÓA ĐƠN
+-- ================================================
+CREATE TABLE CHITIETHOADON (
+MAHOADON INT,
+MAHH INT,
+SOLUONG INT,
+THANHTIEN DECIMAL(12,2),
+PRIMARY KEY (MAHOADON, MAHH),
+FOREIGN KEY (MAHOADON) REFERENCES HOADON(MAHOADON),
+FOREIGN KEY (MAHH) REFERENCES HANGHOA(MAHH)
+);
+
+-- ================================================
+-- BẢNG PHẢN HỒI
+-- ================================================
+CREATE TABLE PHANHOI (
+MAPHANHOI INT PRIMARY KEY,
+MAKHACHHANG INT,
+DANHGIASANPHAM NVARCHAR(255),
+DONGGOP NVARCHAR(255),
+FOREIGN KEY (MAKHACHHANG) REFERENCES KHACHHANG(MAKHACHHANG)
 );
